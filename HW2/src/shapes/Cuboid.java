@@ -40,12 +40,6 @@ public class Cuboid implements ThreeDShape {
 
     @Override
     public int compareTo(ThreeDShape o) {
-        if (this.volume() < o.volume()) {
-            return -1;
-        } else if (this.volume() > o.volume()) {
-            return 1;
-        } else {
-            return 0;
-        }
+        return Double.compare(this.volume(), o.volume());
     }
 }
