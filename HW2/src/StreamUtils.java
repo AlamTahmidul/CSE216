@@ -26,9 +26,9 @@ public class StreamUtils {
      * where ties are broken based on <code>from_start</code>.
      */
     public static String longest(Collection<String> strings, boolean from_start) {
-        return !strings.isEmpty() ?  (strings.stream()
+        return strings.stream()
                 .reduce( (s,s2) -> (s.length() > s2.length() && from_start) ? s : s2)
-                .get()) : "";
+                .orElse("");
     }
 
     /**
@@ -43,7 +43,9 @@ public class StreamUtils {
      * broken based on <code>from_start</code>.
      */
     public static <T extends Comparable<T>> T least(Collection<T> items, boolean from_start) {
-        return null;
+        return items.stream()
+                .reduce( (s, s2) -> (s.compareTo(s2) < 0 && from_start) ? s :
+                        s2).orElse(null);
     }
 
     /**
@@ -56,13 +58,10 @@ public class StreamUtils {
      * @return the flattened list representation of <code>aMap</code>.
      */
     public static <K, V> List<String> flatten(Map<K, V> aMap) {
-        return null;
+        return aMap.entrySet().stream()
+                .map(e -> String.format("%s -> %s", e.getKey(), e.getValue()))
+                .collect(Collectors.toList());
     }
 
-    public static void main(String[] args) {
-        String one = "Hello";
-        Collection<String> strings = Arrays.asList("hello", "Apple", "banana"
-                , "turtles", "tortoise", "Cow");
-        System.out.println(longest(strings, true));
-    }
+    public static void main(String[] args) { }
 }
