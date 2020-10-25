@@ -20,6 +20,16 @@ public class Cuboid implements ThreeDShape {
         for (ThreeDPoint p : vertices) this.vertices[n++] = p;
     }
 
+    public double surfaceArea() {
+        double l =
+                Math.abs(vertices[2].coordinates()[1] - vertices[3].coordinates()[1]);
+        double w =
+                Math.abs(vertices[3].coordinates()[0] - vertices[4].coordinates()[0]);
+        double h =
+                Math.abs(vertices[5].coordinates()[2] - vertices[4].coordinates()[2]);
+        return (2.0 * ( (l*w) + (w*h) * (l*h) ));
+    }
+
     @Override
     public double volume() {
         double x1 = this.vertices[0].coordinates()[0];

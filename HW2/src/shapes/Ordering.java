@@ -1,3 +1,5 @@
+import org.w3c.dom.css.Rect;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -15,19 +17,30 @@ public class Ordering {
     static class AreaComparator implements Comparator<SymmetricTwoDShape> {
         @Override
         public int compare(SymmetricTwoDShape o1, SymmetricTwoDShape o2) {
-            return 0; // TODO
+            return Double.compare(o1.area(), o2.area()); // Check
         }
     }
 
     static class SurfaceAreaComparator implements Comparator<ThreeDShape> {
         @Override
         public int compare(ThreeDShape o1, ThreeDShape o2) {
+            if (o1.getClass() != o2.getClass()) {
+                if (o1 instanceof Cuboid) {
+                    return Double.compare(((Cuboid) o1).surfaceArea(),
+                            ((Cuboid) o2).surfaceArea());
+                } else if (o1 instanceof Sphere) {
+                    return Double.compare(((Sphere) o1).surfaceArea(),
+                            ((Sphere) o2).surfaceArea());
+                }
+            } else {
+                if (o1 instanceof )
+            }
             return 0; // TODO
         }
     }
 
     // TODO: there's a lot wrong with this method. correct it so that it can work properly with generics.
-    static void copy(List<TwoDShape> source, List<TwoDShape> destination) {
+    static <E> void copy(List<E> source, List<E> destination) {
         destination.addAll(source);
     }
 
