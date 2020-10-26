@@ -2,6 +2,10 @@ import java.util.List;
 
 public class Rectangle extends Quadrilateral implements SymmetricTwoDShape {
 
+    public Rectangle(double... vertices) {
+        super(vertices);
+    }
+
     public Rectangle(List<TwoDPoint> vertices) {
         super(vertices);
     }

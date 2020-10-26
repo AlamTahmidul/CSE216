@@ -81,7 +81,7 @@ public class HigherOrderUtils {
     }
 
     static class FunctionComposition<T,U,R> {
-//        BiFunction<T,U,R> composition = (a,b) -> ;
+        BiFunction<T,U,R> composition;
     }
 
     public static void main(String[] args) { }
