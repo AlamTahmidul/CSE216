@@ -55,4 +55,12 @@ public class Sphere implements ThreeDShape {
         this.vertex = vertex;
     }
 
+    public Sphere random() {
+        double radius = Math.random() * 100;
+        double x = Math.random() * 100;
+        double y = Math.random() * 100;
+        double z = Math.random() * 100;
+        return new Sphere(x, y, z, radius);
+    }
+
 }

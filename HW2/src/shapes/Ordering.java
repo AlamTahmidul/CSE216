@@ -69,14 +69,15 @@ public class Ordering {
         }
     }
 
-    // TODO: there's a lot wrong with this method. correct it so that it can work properly with generics.
-    static <E> void copy(List<? extends E> source,
-                                           List<? extends E> destination) {
-        List<E> lis = new ArrayList<E>();
-        lis.addAll(destination);
-        lis.addAll(source);
-        destination = lis;
-//        destination.addAll(source);
+    // CHECk: there's a lot wrong with this method. correct it so that it can
+    // work properly with generics.
+    static<E> void copy(Collection<? extends E> source,
+                                           Collection<E> destination) {
+//        List<E> lis = new ArrayList<>();
+//        lis.addAll(destination);
+//        lis.addAll(source);
+//        destination = lis;
+        destination.addAll(source);
     }
 
     public static void main(String[] args) {
@@ -89,7 +90,7 @@ public class Ordering {
          * implementations are correct, then the code should compile and yield the expected results of the various
          * shapes being ordered by their smallest x-coordinate, area, volume, surface area, etc. */
 
-        /*
+
         symmetricshapes.add(new Rectangle(15.0, 10.0, 0, 10, 0, 0, 15, 0));
         List<TwoDPoint> points = new ArrayList<TwoDPoint>(){{
             add(new TwoDPoint(10, 10));
@@ -112,14 +113,14 @@ public class Ordering {
         // sorting 3d shapes according to various criteria
         Collections.sort(threedshapes);
         threedshapes.sort(new SurfaceAreaComparator());
-        */
+
 
         /*
          * if your changes to copy() are correct, uncommenting the following block will also work as expected note that
          * copy() should work for the line commented with 'note-1' while at the same time also working with the lines
          * commented with 'note-2' and 'note-3'. */
 
-        /*
+
         List<Number> numbers = new ArrayList<>();
         List<Double> doubles = new ArrayList<>();
         Set<Square> squares = new HashSet<>();
@@ -127,6 +128,6 @@ public class Ordering {
 
         copy(doubles, numbers); // note-2 //
         copy(squares, quads);   // note-3 //
-        */
+
     }
 }

@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 
 // Completed : a missing interface method must be implemented in this class to
@@ -51,5 +52,24 @@ public class Cuboid implements ThreeDShape {
     @Override
     public int compareTo(ThreeDShape o) {
         return Double.compare(this.volume(), o.volume());
+    }
+
+    public Cuboid random() {
+        double difference = Math.random() * 100;
+        double a = Math.random() * 100;
+        double b = Math.random() * 100;
+        double c = Math.random() * 100;
+        List<ThreeDPoint> points = new ArrayList<ThreeDPoint>(){{
+            add(new ThreeDPoint(a + difference, b + difference, c + difference));
+            add(new ThreeDPoint(a + difference, b, c + difference));
+            add(new ThreeDPoint(a + difference, b, c));
+            add(new ThreeDPoint(a + difference, b + difference, c));
+            add(new ThreeDPoint(a, b + difference, c));
+            add(new ThreeDPoint(a, b + difference, c + difference));
+            add(new ThreeDPoint(a, b, c + difference));
+            add(new ThreeDPoint(a, b, c));
+        }
+        };
+        return new Cuboid(points);
     }
 }
