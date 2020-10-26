@@ -1,5 +1,6 @@
 import java.util.*;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 public class HigherOrderUtils {
     interface NamedBiFunction<T,U,R> extends BiFunction<T,U,R> {
@@ -75,7 +76,9 @@ public class HigherOrderUtils {
      * result of all the bifunctions being applied in sequence.
      */
     public static <T> T zip(List<T> args, List<NamedBiFunction<T, T, T>> bifunctions) {
-        
+        args.stream().map((a, b) ->
+                bifunctions.stream().mapToDouble( e -> )
+        );
         return null;
     }
 
