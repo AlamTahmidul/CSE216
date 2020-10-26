@@ -76,13 +76,13 @@ public class HigherOrderUtils {
      * result of all the bifunctions being applied in sequence.
      */
     public static <T> T zip(List<T> args, List<NamedBiFunction<T, T, T>> bifunctions) {
-        args.stream().map((a, b) ->
-                bifunctions.stream().mapToDouble( e -> )
-        );
+//        args.stream().map((a, b) -> );
         return null;
     }
 
-    public static void main(String[] args) {
-
+    static class FunctionComposition<T,U,R> {
+//        BiFunction<T,U,R> composition = (a,b) -> ;
     }
+
+    public static void main(String[] args) { }
 }
