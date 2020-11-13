@@ -45,7 +45,7 @@ class Quadrilateral:
         three2 = abs(vertices[3].x - vertices[2].x)
         two1 = abs(vertices[2].y - vertices[1].y)
         one0 = abs(vertices[1].x - vertices[0].x)
-        return zero3, three2, two1, one0  # Done
+        return one0, zero3, three2, two1  # Done
 
     def smallest_x(self):
         """Returns the x-coordinate of the vertex with the smallest x-value of the four vertices of this

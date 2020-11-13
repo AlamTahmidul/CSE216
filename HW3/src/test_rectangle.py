@@ -1,4 +1,5 @@
 from unittest import TestCase, main
+from rectangle import Rectangle
 
 
 class TestRectangle(TestCase):

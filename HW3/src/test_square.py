@@ -1,4 +1,5 @@
 from unittest import TestCase, main
+from square import Square
 
 
 class TestSquare(TestCase):

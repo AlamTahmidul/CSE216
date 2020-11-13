@@ -13,7 +13,7 @@ class Rectangle(Quadrilateral):
         return self.__class__.__name__ == other.__class__.__name__ and super().__eq__(other)
 
     def __str__(self):
-        return super().__str__()
+        return super().__str__() + "Center: {}\nArea: {}\n".format(str(self.center()), str(self.area()))
 
     def __is_member(self):
         """Returns True if the given coordinates form a valid rectangle, and False otherwise."""
