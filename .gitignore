@@ -1,3 +1,5 @@
-
 *.class
 *.class
+*.pyc
+HW3/venv
+HW3/.idea
