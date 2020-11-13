@@ -22,7 +22,8 @@ class TwoDPoint:
         return not (self == other)
 
     def __str__(self) -> str:
-        return '(%g, %g)' % (self.__x, self.__y)
+        # return '(%g, %g)' % (self.__x, self.__y)
+        return "({}, {})".format(str(self.__x), str(self.__y))
 
     # Done: add magic methods such that two TwoDPoint objects can be added and subtracted coordinate-wise just by using
     #  syntax of the form p + q or p - q
@@ -51,3 +52,5 @@ class TwoDPoint:
 # point2 = TwoDPoint(1.1, 2.0)
 # point3 = point - point2
 # print(point3)
+# coordinates1 = [2, 1, 0, 1, 0, 0, 2, 0]
+# print(''.join(map(str, TwoDPoint.from_coordinates(coordinates1))))
