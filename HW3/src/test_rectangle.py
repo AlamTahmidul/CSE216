@@ -11,6 +11,8 @@ class TestRectangle(TestCase):
             r2 = Rectangle(2, 4, -2, 4, -5, 0, 5, 0)  # Trapezoid
         r3 = Rectangle(1, 1, 0, 1, 0, 0, 1, 0)  # Square
         self.assertEqual(str(r3.center()), str(TwoDPoint(0.5, 0.5)))
+        with self.assertRaises(TypeError) as error:
+            r4 = Rectangle(1, 1, 0, 1, 0, 0, 1, 0, 5, 6)  # Too many arguments
 
     def test_area(self):
         r1 = Rectangle(2, 1.0, 0.0, 1.0, 0.0, 0.0, 2.0, 0.0)
