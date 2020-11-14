@@ -24,8 +24,8 @@ class Rectangle(Quadrilateral):
 
     def center(self):
         """Returns the center of this rectangle, calculated to be the point of intersection of its diagonals."""
-        x = (self.vertices[0].x + self.vertices[1].x) / 2
-        y = (self.vertices[0].y + self.vertices[1].y) / 2
+        x = (self.vertices[0].x + self.vertices[2].x) / 2
+        y = (self.vertices[0].y + self.vertices[2].y) / 2
         return TwoDPoint(x, y)  # Done
 
     def area(self):

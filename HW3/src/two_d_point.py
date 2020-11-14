@@ -40,7 +40,6 @@ class TwoDPoint:
     @staticmethod
     def from_coordinates(coordinates: List[float]):
         if len(coordinates) % 2 != 0:
-            print(coordinates)
             raise Exception("Odd number of floats given to build a list of 2-d points")
         points = []
         it = iter(coordinates)

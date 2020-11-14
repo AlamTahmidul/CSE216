@@ -4,6 +4,8 @@ from two_d_point import TwoDPoint
 class Quadrilateral:
     def __init__(self, *floats):
         points = TwoDPoint.from_coordinates(list(floats))
+        if len(points) != 4:
+            raise TypeError("Too many or too few points")
         self.__vertices = tuple(points[0:4])
         if not self.__is_member():
             raise TypeError("A quadrilateral cannot be formed from given coordinates")
