@@ -1,4 +1,5 @@
-from unittest import TestCase, main
+from unittest import TestCase
+# from unittest import main
 from quadrilateral import Quadrilateral
 
 
@@ -27,5 +28,5 @@ class TestQuadrilateral(TestCase):
         self.assertEqual(q3.smallest_x(), 0)
 
 
-if __name__ == '__main__':
-    main()
+# if __name__ == '__main__':
+#     main()

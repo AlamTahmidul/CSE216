@@ -1,5 +1,5 @@
 from unittest import TestCase
-from unittest import main
+# from unittest import main
 from two_d_point import TwoDPoint
 
 
@@ -28,5 +28,5 @@ class TestTwoDPoint(TestCase):
         self.assertEqual(str(TwoDPoint(0, 1) - TwoDPoint(1, 2)), '(-1, -1)')
 
 
-if __name__ == '__main__':
-    main()
+# if __name__ == '__main__':
+#     main()

@@ -1,4 +1,5 @@
-from unittest import TestCase, main
+from unittest import TestCase
+# from unittest import main
 from square import Square
 
 
@@ -15,5 +16,5 @@ class TestSquare(TestCase):
             Square(2, 4, -2, 4, -5, 0, 5, 0)  # Trapezoid
 
 
-if __name__ == '__main__':
-    main()
+# if __name__ == '__main__':
+#     main()

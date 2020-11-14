@@ -1,4 +1,5 @@
-from unittest import TestCase, main
+from unittest import TestCase
+# from unittest import main
 from rectangle import Rectangle
 from two_d_point import TwoDPoint
 
@@ -21,5 +22,5 @@ class TestRectangle(TestCase):
         self.assertEqual(r3.area(), 1.0)
 
 
-if __name__ == '__main__':
-    main()
+# if __name__ == '__main__':
+#     main()
