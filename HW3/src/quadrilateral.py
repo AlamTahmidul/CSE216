@@ -3,7 +3,10 @@ from two_d_point import TwoDPoint
 
 class Quadrilateral:
     def __init__(self, *floats):
-        points = TwoDPoint.from_coordinates(list(floats))
+        if isinstance(floats[0], list):
+            points = TwoDPoint.from_coordinates(floats[0])
+        else:
+            points = TwoDPoint.from_coordinates(list(floats))
         if len(points) != 4:
             raise TypeError("Too many or too few points")
         self.__vertices = tuple(points[0:4])
@@ -43,10 +46,11 @@ class Quadrilateral:
         """Returns a tuple of four floats, each denoting the length of a side of this quadrilateral. The value must be
         ordered clockwise, starting from the top left corner."""
         vertices = self.__vertices
-        zero3 = abs(vertices[0].y - vertices[3].y)
-        three2 = abs(vertices[3].x - vertices[2].x)
-        two1 = abs(vertices[2].y - vertices[1].y)
-        one0 = abs(vertices[1].x - vertices[0].x)
+        zero3 = abs(round(vertices[0].y - vertices[3].y, 4))
+        three2 = abs(round(vertices[3].x - vertices[2].x, 4))
+        two1 = abs(round(vertices[2].y - vertices[1].y, 4))
+        one0 = abs(round(vertices[1].x - vertices[0].x, 4))
+        # print("{}, {}, {}, {}".format(one0, zero3, three2, two1))
         return one0, zero3, three2, two1  # Done
 
     def smallest_x(self):

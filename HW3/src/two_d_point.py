@@ -28,13 +28,13 @@ class TwoDPoint:
     # Done: add magic methods such that two TwoDPoint objects can be added and subtracted coordinate-wise just by using
     #  syntax of the form p + q or p - q
     def __add__(self, other):
-        x = self.__x + other.x
-        y = self.__y + other.y
+        x = round(self.__x + other.x)
+        y = round(self.__y + other.y)
         return TwoDPoint(x, y)
 
     def __sub__(self, other):
-        x = self.__x - other.x
-        y = self.__y - other.y
+        x = round(self.__x - other.x, 4)
+        y = round(self.__y - other.y, 4)
         return TwoDPoint(x, y)
 
     @staticmethod
