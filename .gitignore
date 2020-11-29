@@ -3,3 +3,5 @@
 *.pyc
 HW3/venv
 HW3/.idea
+*.xml
+*.iml
