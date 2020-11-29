@@ -5,21 +5,17 @@ public class DensePolynomial implements Polynomial {
     private String polynomialString = "";
 
     public DensePolynomial(String polynomialString) {
-//        System.out.println("Original String: " + polynomialString);
-//        int maxDegree = polynomialString.indexOf("^");
-//        System.out.println("Max Degree Index: " + (maxDegree + 1));
-//        System.out.println("Separate by Space, +, or -: ");
         this.polynomialString = polynomialString;
-        if (wellFormed()) {
-            // TODO
-        } else {
+        if (!wellFormed())
             throw new IllegalArgumentException("Invalid Argument: " + polynomialString);
-        }
-
     }
 
     public void setCoefficients(int[] coefficients) {
         this.coefficients = coefficients;
+    }
+
+    public int[] getCoefficients() {
+        return coefficients;
     }
 
     public static void main(String[] args) {

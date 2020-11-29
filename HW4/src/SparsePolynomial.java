@@ -2,16 +2,18 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class SparsePolynomial implements Polynomial {
-    private String polynomialString;
-    private Map<Integer, Integer> polynomialMap;
+    private String polynomialString = "";
+    private TreeMap<Integer, Integer> polynomialMap;
 
     public SparsePolynomial(String polynomialString) {
         this.polynomialString = polynomialString;
-        if (wellFormed()) {
-            // TODO
-        } else {
+        if (!wellFormed()) {
             throw new IllegalArgumentException("Invalid Argument: " + polynomialString);
         }
+    }
+
+    public void setPolynomialMap(TreeMap<Integer, Integer> polynomialMap) {
+        this.polynomialMap = polynomialMap;
     }
 
     /**
@@ -21,7 +23,7 @@ public class SparsePolynomial implements Polynomial {
      */
     @Override
     public int degree() {
-        return 0;
+        return polynomialMap.firstKey();
     }
 
     /**
@@ -33,7 +35,7 @@ public class SparsePolynomial implements Polynomial {
      */
     @Override
     public int getCoefficient(int d) {
-        return 0;
+        return polynomialMap.get(d);
     }
 
     /**
@@ -90,7 +92,13 @@ public class SparsePolynomial implements Polynomial {
      */
     @Override
     public Polynomial minus() {
-        return null;
+        SparsePolynomial sp = new SparsePolynomial(polynomialString);
+        TreeMap<Integer, Integer> newPoly = new TreeMap<Integer, Integer>();
+        for (Map.Entry<Integer, Integer> entry : polynomialMap.entrySet()) {
+            newPoly.put(entry.getKey(), entry.getValue() * -1);
+        }
+        sp.setPolynomialMap(newPoly);
+        return sp;
     }
 
     /**
@@ -108,9 +116,37 @@ public class SparsePolynomial implements Polynomial {
         polynomialMap = new TreeMap<Integer, Integer>();
         for (String s : split) {
             String[] s2 = s.split("\\^");
-            
+            if (s2.length > 1) {
+                int temp;
+                if (Double.parseDouble(s2[1]) % 1 != 0) return false;
+                else if (s2[0].split("x").length == 0) temp = 1;
+                else if (Double.parseDouble(s2[0].split("x")[0]) % 1 != 0 || Double.parseDouble(s2[1].split("x")[0]) % 1 != 0) return false;
+                else temp = Integer.parseInt(s2[0].split("x")[0]);
+                polynomialMap.put(temp, Integer.parseInt(s2[1]));
+            } else {
+                int exp, coeff;
+                if (s2[0].split("x").length == 0) exp = coeff = 1; // Case: x
+                else if (s2[0].contains("x") && Double.parseDouble(s2[0].split("x")[0]) % 1 != 0) return false; // Case: 3.0x
+                else if ( s2[0].contains("x") ) { // Case: 3.0x
+                    exp = 1;
+                    coeff = Integer.parseInt(s2[0].split("x")[0]);
+                }
+                else { // Case: 3.0
+                    exp = 0;
+                    if (Double.parseDouble(s2[0].split("X")[0]) % 1 != 0) return false;
+                    else coeff = Integer.parseInt(s2[0].split("x")[0]);
+                }
+                polynomialMap.put(exp, coeff);
+            }
         }
-
         return true;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SparsePolynomial that = (SparsePolynomial) o;
+        return polynomialMap.equals(that.polynomialMap);
     }
 }
