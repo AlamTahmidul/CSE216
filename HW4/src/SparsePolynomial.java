@@ -28,6 +28,17 @@ public class SparsePolynomial implements Polynomial {
         return polynomialMap;
     }
 
+    public static void main(String[] args) {
+        SparsePolynomial sp = new SparsePolynomial("3x + 2");
+        System.out.println("sp (Original): 3x + 2");
+        System.out.println("sp (toString): " + sp.toString());
+        SparsePolynomial sp2 = new SparsePolynomial("3x^2 + 2");
+        System.out.println("sp2 (Original): 3x^2 + 2");
+        System.out.println("sp2 (toString): " + sp2.toString());
+        System.out.println("sp2 (toString_minus): " + sp2.minus().toString());
+//        SparsePolynomial sp3 = new SparsePolynomial("");
+    }
+
     /**
      * Returns the degree of the polynomial.
      *
@@ -67,12 +78,20 @@ public class SparsePolynomial implements Polynomial {
      *
      * @param q the non-null polynomial to add to <code>this</code>
      * @return <code>this + </code>q
-     * @throws NullPointerException if q is null
+     * @throws NullPointerException if q is null or if q is not a valid instance of Dense/SparsePolynomial
      */
     @Override
     public Polynomial add(Polynomial q) {
-
-        return null;
+        if (q == null) throw new NullPointerException("Other polynomial can't be null!");
+        if (q instanceof DensePolynomial) {
+            // TODO: Sparse + Dense
+            DensePolynomial dp = (DensePolynomial) q;
+            
+        } else if (q instanceof SparsePolynomial) {
+            // TODO: Sparse + Sparse
+            SparsePolynomial sp = (SparsePolynomial) q;
+        }
+        throw new NullPointerException("Other polynomial is not a valid polynomial");
     }
 
     /**
@@ -138,7 +157,7 @@ public class SparsePolynomial implements Polynomial {
                 else if (s2[0].split("x").length == 0) temp = 1;
                 else if (Double.parseDouble(s2[0].split("x")[0]) % 1 != 0 || Double.parseDouble(s2[1].split("x")[0]) % 1 != 0) return false;
                 else temp = Integer.parseInt(s2[0].split("x")[0]);
-                polynomialMap.put(temp, Integer.parseInt(s2[1]));
+                polynomialMap.put(Integer.parseInt(s2[1]), temp);
             } else {
                 int exp, coeff;
                 if (s2[0].split("x").length == 0) exp = coeff = 1; // Case: x
@@ -164,5 +183,21 @@ public class SparsePolynomial implements Polynomial {
         if (o == null || getClass() != o.getClass()) return false;
         SparsePolynomial that = (SparsePolynomial) o;
         return polynomialMap.equals(that.polynomialMap);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder();
+        for (Map.Entry<Integer, Integer> entry : polynomialMap.entrySet()) {
+            if (entry.getKey() <= 1) {
+                if (entry.getKey() == 1)
+                    s.insert(0, " + " + entry.getValue() + "x");
+                else
+                    s.insert(0, " + " +entry.getValue());
+            } else {
+                s.insert(0, " + " + entry.getValue() + "x^" + entry.getKey());
+            }
+        }
+        return s.toString().substring(3);
     }
 }
