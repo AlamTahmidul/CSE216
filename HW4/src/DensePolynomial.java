@@ -1,4 +1,5 @@
 import java.util.Arrays;
+import java.util.Map;
 
 public class DensePolynomial implements Polynomial {
     private int[] coefficients;
@@ -12,10 +13,6 @@ public class DensePolynomial implements Polynomial {
 
     public void setCoefficients(int[] coefficients) {
         this.coefficients = coefficients;
-    }
-
-    public int[] getCoefficients() {
-        return coefficients;
     }
 
     public static void main(String[] args) {
@@ -77,7 +74,53 @@ public class DensePolynomial implements Polynomial {
     @Override
     public Polynomial add(Polynomial q) {
         if (q == null) throw new NullPointerException("Other Polynomial cannot be null");
-        return null;
+        if (q instanceof SparsePolynomial) {
+            SparsePolynomial sp =  (SparsePolynomial) q;
+            int[] newCoeff = new int[coefficients.length];
+            if (sp.getPolynomialMap().lastKey() < 0) throw new IllegalArgumentException("q contains negative exponents");
+            else {
+                int i = 0;
+                for (Map.Entry<Integer, Integer> entry : sp.getPolynomialMap().entrySet()) {
+                    if (entry.getKey() <= coefficients.length - 1) {
+                        int temp = coefficients[entry.getKey()] + entry.getValue();
+                        newCoeff[entry.getKey()] = temp;
+                    } else if (i == 0) {
+                        newCoeff = new int[entry.getKey()];
+                    } else {
+                        newCoeff[entry.getKey()] = entry.getValue();
+                    }
+                    i++;
+                }
+                DensePolynomial dp = new DensePolynomial(polynomialString);
+                dp.setCoefficients(newCoeff);
+//                dp.setPolynomialString(dp.toString());
+            }
+        } else if (q instanceof DensePolynomial) {
+            DensePolynomial qDense = (DensePolynomial) q;
+            int max = Math.max(degree(), qDense.degree());
+            int[] newCoeff = new int[max];
+            if (degree() > qDense.degree())  {
+                int i;
+                for (i = 0; i <= qDense.degree(); i++) {
+                    newCoeff[i] = coefficients[i] + qDense.getCoefficient(i);
+                }
+                for (; i <= degree(); i++) {
+                    newCoeff[i] = coefficients[i];
+                }
+            } else {
+                int i;
+                for (i = 0; i <= degree(); i++) {
+                    newCoeff[i] = coefficients[i] + qDense.getCoefficient(i);
+                }
+                for (; i <= qDense.degree(); i++) {
+                    newCoeff[i] = qDense.getCoefficient(i);
+                }
+            }
+            DensePolynomial newPoly = new DensePolynomial(polynomialString);
+            newPoly.setCoefficients(newCoeff);
+            return newPoly;
+        }
+        throw new NullPointerException("Other polynomial is not a valid polynomial?");
     }
 
     /**
@@ -91,7 +134,34 @@ public class DensePolynomial implements Polynomial {
     @Override
     public Polynomial multiply(Polynomial q) {
         if (q == null) throw new NullPointerException("The other polynomial can't be null!");
-        return null;
+        if (q instanceof SparsePolynomial) {
+            // Check: Dense * Sparse
+            SparsePolynomial sp = (SparsePolynomial) q;
+            int[] newCoeff = new int[degree() + sp.degree()];
+            for (Map.Entry<Integer, Integer> entry : sp.getPolynomialMap().entrySet()) {
+                for (int i = 0; i <= degree(); i++) {
+                    if (i + entry.getKey() < 0) throw new IllegalArgumentException("Dense*Sparse contains a negative " +
+                            "exponent.");
+                    newCoeff[i + entry.getKey()] += coefficients[i] * entry.getValue();
+                }
+            }
+            DensePolynomial dp = new DensePolynomial(polynomialString);
+            dp.setCoefficients(newCoeff);
+            return dp;
+        } else if (q instanceof DensePolynomial) {
+            // Check: Dense * Dense
+            DensePolynomial dp = (DensePolynomial) q;
+            int[] newCoeff = new int[degree() + dp.degree()];
+            for (int i = 0; i <= degree(); i++) {
+                for (int j = 0; j <= dp.degree(); j++) {
+                    newCoeff[i + j] += coefficients[i] * dp.getCoefficient(j);
+                }
+            }
+            DensePolynomial dp2 = new DensePolynomial(polynomialString);
+            dp2.setCoefficients(newCoeff);
+            return dp2;
+        }
+        throw new NullPointerException("Other Polynomial is not a valid polynomial?");
     }
 
     /**
@@ -106,9 +176,53 @@ public class DensePolynomial implements Polynomial {
     public Polynomial subtract(Polynomial q) {
         if (q == null) throw new NullPointerException("Other Polynomial cannot be null");
         if (q instanceof SparsePolynomial) {
-            System.out.println("q is a Sparse Polynomial");
+            SparsePolynomial sp =  (SparsePolynomial) q;
+            int[] newCoeff = new int[coefficients.length];
+            if (sp.getPolynomialMap().lastKey() < 0) throw new IllegalArgumentException("q contains negative exponents");
+            else {
+                int i = 0;
+                for (Map.Entry<Integer, Integer> entry : sp.getPolynomialMap().entrySet()) {
+                    if (entry.getKey() <= coefficients.length - 1) {
+                        int temp = coefficients[entry.getKey()] - entry.getValue();
+                        newCoeff[entry.getKey()] = temp;
+                    } else if (i == 0) {
+                        newCoeff = new int[entry.getKey()];
+                    } else {
+                        newCoeff[entry.getKey()] = entry.getValue();
+                    }
+                    i++;
+                }
+                DensePolynomial dp = new DensePolynomial(polynomialString);
+                dp.setCoefficients(newCoeff);
+//                dp.setPolynomialString(dp.toString());
+                return dp;
+            }
+        } else if (q instanceof DensePolynomial) {
+            DensePolynomial qDense = (DensePolynomial) q;
+            int max = Math.max(degree(), qDense.degree());
+            int[] newCoeff = new int[max];
+            if (degree() > qDense.degree())  {
+                int i;
+                for (i = 0; i <= qDense.degree(); i++) {
+                    newCoeff[i] = coefficients[i] - qDense.getCoefficient(i);
+                }
+                for (; i <= degree(); i++) {
+                    newCoeff[i] = coefficients[i];
+                }
+            } else {
+                int i;
+                for (i = 0; i <= degree(); i++) {
+                    newCoeff[i] = coefficients[i] - qDense.getCoefficient(i);
+                }
+                for (; i <= qDense.degree(); i++) {
+                    newCoeff[i] = qDense.getCoefficient(i);
+                }
+            }
+            DensePolynomial newPoly = new DensePolynomial(polynomialString);
+            newPoly.setCoefficients(newCoeff);
+            return newPoly;
         }
-        return null;
+        throw new NullPointerException("Other polynomial is not a valid polynomial?");
     }
 
     /**

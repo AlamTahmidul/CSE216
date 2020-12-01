@@ -16,6 +16,18 @@ public class SparsePolynomial implements Polynomial {
         this.polynomialMap = polynomialMap;
     }
 
+    public String getPolynomialString() {
+        return polynomialString;
+    }
+
+    public void setPolynomialString(String polynomialString) {
+        this.polynomialString = polynomialString;
+    }
+
+    public TreeMap<Integer, Integer> getPolynomialMap() {
+        return polynomialMap;
+    }
+
     /**
      * Returns the degree of the polynomial.
      *
@@ -43,7 +55,10 @@ public class SparsePolynomial implements Polynomial {
      */
     @Override
     public boolean isZero() {
-        return false;
+        for (Map.Entry<Integer, Integer> entry : polynomialMap.entrySet())
+            if (entry.getKey() != 0 && entry.getValue() != 0)
+                return false;
+        return true;
     }
 
     /**
@@ -56,6 +71,7 @@ public class SparsePolynomial implements Polynomial {
      */
     @Override
     public Polynomial add(Polynomial q) {
+
         return null;
     }
 
