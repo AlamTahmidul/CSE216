@@ -67,7 +67,7 @@ public class SparsePolynomial implements Polynomial {
     public Polynomial add(Polynomial q) {
         if (q == null) throw new NullPointerException("Other polynomial can't be null!");
         if (q instanceof DensePolynomial) {
-            // TODO: Sparse + Dense
+            // : Sparse + Dense
             DensePolynomial dp = (DensePolynomial) q;
             TreeMap<Integer, Integer> tm = new TreeMap<Integer, Integer>();
             for (int i = 0; i <= dp.degree(); i++) {
@@ -84,7 +84,7 @@ public class SparsePolynomial implements Polynomial {
             sp.setPolynomialMap(tm);
             return sp;
         } else if (q instanceof SparsePolynomial) {
-            // TODO: Sparse + Sparse
+            // : Sparse + Sparse
             SparsePolynomial sp = (SparsePolynomial) q;
             TreeMap<Integer, Integer> tm = new TreeMap<Integer, Integer>();
             for (Map.Entry<Integer, Integer> entry : sp.getPolynomialMap().entrySet()) {
@@ -166,7 +166,7 @@ public class SparsePolynomial implements Polynomial {
     public Polynomial subtract(Polynomial q) {
         if (q == null) throw new NullPointerException("Other polynomial can't be null!");
         if (q instanceof DensePolynomial) {
-            // TODO: Sparse - Dense
+            // : Sparse - Dense
             DensePolynomial dp = (DensePolynomial) q;
             TreeMap<Integer, Integer> tm = new TreeMap<Integer, Integer>();
             for (int i = 0; i <= dp.degree(); i++) {
@@ -183,7 +183,7 @@ public class SparsePolynomial implements Polynomial {
             sp.setPolynomialMap(tm);
             return sp;
         } else if (q instanceof SparsePolynomial) {
-            // TODO: Sparse - Sparse
+            // : Sparse - Sparse
             SparsePolynomial sp = (SparsePolynomial) q;
             TreeMap<Integer, Integer> tm = new TreeMap<Integer, Integer>();
             for (Map.Entry<Integer, Integer> entry : sp.getPolynomialMap().entrySet()) {

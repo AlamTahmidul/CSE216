@@ -15,14 +15,6 @@ public class DensePolynomial implements Polynomial {
         this.coefficients = coefficients;
     }
 
-    public static void main(String[] args) {
-//        DensePolynomial dp = new DensePolynomial("2x^3 + + 3x + -1");
-        DensePolynomial dp2 = new DensePolynomial("1");
-//        DensePolynomial dp3 = new DensePolynomial("");
-        DensePolynomial dp4 = new DensePolynomial("3x + 2");
-        DensePolynomial dp6 = new DensePolynomial("2x^10 + 3x^6 + -1");
-    }
-
     /**
      * Returns the degree of the polynomial.
      *
@@ -63,37 +55,34 @@ public class DensePolynomial implements Polynomial {
      * @param q the non-null polynomial to add to <code>this</code>
      * @return <code>this + </code>q
      * @throws NullPointerException if q is null
+     * @throws IllegalArgumentException if q has negative exponents
      */
     @Override
     public Polynomial add(Polynomial q) {
         if (q == null) throw new NullPointerException("Other Polynomial cannot be null");
         if (q instanceof SparsePolynomial) {
             SparsePolynomial sp =  (SparsePolynomial) q;
-            if (q.isZero() || isZero()) return new DensePolynomial("0");
-            int[] newCoeff = new int[coefficients.length];
+            int max = Math.max(sp.degree(), degree());
+            int[] newCoeff = new int[max + 1];
             if (sp.getPolynomialMap().lastKey() < 0) throw new IllegalArgumentException("q contains negative exponents");
             else {
-                int i = 0;
-                for (Map.Entry<Integer, Integer> entry : sp.getPolynomialMap().entrySet()) {
-                    if (entry.getKey() <= coefficients.length - 1) {
-                        int temp = coefficients[entry.getKey()] + entry.getValue();
-                        newCoeff[entry.getKey()] = temp;
-                    } else if (i == 0) {
-                        newCoeff = new int[entry.getKey()];
-                    } else {
-                        newCoeff[entry.getKey()] = entry.getValue();
+                    for (Map.Entry<Integer, Integer> entry : sp.getPolynomialMap().entrySet()) {
+                        newCoeff[entry.getKey()] += entry.getValue();
                     }
-                    i++;
-                }
-                DensePolynomial dp = new DensePolynomial(polynomialString);
-                dp.setCoefficients(newCoeff);
-//                dp.setPolynomialString(dp.toString());
+                    for (int i = 0; i <= degree(); i++) {
+                        newCoeff[i] += coefficients[i];
+                    }
+
+                    DensePolynomial dp = new DensePolynomial(polynomialString);
+                    dp.setCoefficients(newCoeff);
+                    return dp;
+
             }
         } else if (q instanceof DensePolynomial) {
             DensePolynomial qDense = (DensePolynomial) q;
-            if (q.isZero() || isZero()) return new DensePolynomial("0");
+
             int max = Math.max(degree(), qDense.degree());
-            int[] newCoeff = new int[max];
+            int[] newCoeff = new int[max + 1];
             if (degree() > qDense.degree())  {
                 int i = 0;
                 for (; i <= qDense.degree(); i++) {
@@ -173,48 +162,83 @@ public class DensePolynomial implements Polynomial {
      */
     @Override
     public Polynomial subtract(Polynomial q) {
+//        if (q == null) throw new NullPointerException("Other Polynomial cannot be null");
+//        if (q instanceof SparsePolynomial) {
+//            SparsePolynomial sp =  (SparsePolynomial) q;
+//            int[] newCoeff = new int[coefficients.length];
+//            if (sp.getPolynomialMap().lastKey() < 0) throw new IllegalArgumentException("q contains negative exponents");
+//            else {
+//                int i = 0;
+//                for (Map.Entry<Integer, Integer> entry : sp.getPolynomialMap().entrySet()) {
+//                    if (entry.getKey() <= coefficients.length - 1) {
+//                        int temp = coefficients[entry.getKey()] - entry.getValue();
+//                        newCoeff[entry.getKey()] = temp;
+//                    } else if (i == 0) {
+//                        newCoeff = new int[entry.getKey()];
+//                    } else {
+//                        newCoeff[entry.getKey()] = entry.getValue();
+//                    }
+//                    i++;
+//                }
+//                DensePolynomial dp = new DensePolynomial(polynomialString);
+//                dp.setCoefficients(newCoeff);
+//                return dp;
+//            }
+//        } else if (q instanceof DensePolynomial) {
+//            DensePolynomial qDense = (DensePolynomial) q;
+//            int max = Math.max(degree(), qDense.degree());
+//            int[] newCoeff = new int[max];
+//            if (degree() > qDense.degree())  {
+//                int i;
+//                for (i = 0; i <= qDense.degree(); i++) {
+//                    newCoeff[i] = coefficients[i] - qDense.getCoefficient(i);
+//                }
+//                for (; i <= degree(); i++) {
+//                    newCoeff[i] = coefficients[i];
+//                }
+//            } else {
+//                int i;
+//                for (i = 0; i <= degree(); i++) {
+//                    newCoeff[i] = coefficients[i] - qDense.getCoefficient(i);
+//                }
+//                for (; i <= qDense.degree(); i++) {
+//                    newCoeff[i] = qDense.getCoefficient(i);
+//                }
+//            }
+//            DensePolynomial newPoly = new DensePolynomial(polynomialString);
+//            newPoly.setCoefficients(newCoeff);
+//            return newPoly;
+//        }
+//        throw new NullPointerException("Other polynomial is not a valid polynomial?");
         if (q == null) throw new NullPointerException("Other Polynomial cannot be null");
         if (q instanceof SparsePolynomial) {
             SparsePolynomial sp =  (SparsePolynomial) q;
-            int[] newCoeff = new int[coefficients.length];
+            int max = Math.max(sp.degree(), degree());
+            int[] newCoeff = new int[max + 1];
             if (sp.getPolynomialMap().lastKey() < 0) throw new IllegalArgumentException("q contains negative exponents");
             else {
-                int i = 0;
                 for (Map.Entry<Integer, Integer> entry : sp.getPolynomialMap().entrySet()) {
-                    if (entry.getKey() <= coefficients.length - 1) {
-                        int temp = coefficients[entry.getKey()] - entry.getValue();
-                        newCoeff[entry.getKey()] = temp;
-                    } else if (i == 0) {
-                        newCoeff = new int[entry.getKey()];
-                    } else {
-                        newCoeff[entry.getKey()] = entry.getValue();
-                    }
-                    i++;
+                    newCoeff[entry.getKey()] -= entry.getValue();
                 }
+                for (int i = 0; i <= degree(); i++) {
+                    newCoeff[i] += coefficients[i];
+                }
+
                 DensePolynomial dp = new DensePolynomial(polynomialString);
                 dp.setCoefficients(newCoeff);
                 return dp;
+
             }
         } else if (q instanceof DensePolynomial) {
             DensePolynomial qDense = (DensePolynomial) q;
+
             int max = Math.max(degree(), qDense.degree());
-            int[] newCoeff = new int[max];
-            if (degree() > qDense.degree())  {
-                int i;
-                for (i = 0; i <= qDense.degree(); i++) {
-                    newCoeff[i] = coefficients[i] - qDense.getCoefficient(i);
-                }
-                for (; i <= degree(); i++) {
-                    newCoeff[i] = coefficients[i];
-                }
-            } else {
-                int i;
-                for (i = 0; i <= degree(); i++) {
-                    newCoeff[i] = coefficients[i] - qDense.getCoefficient(i);
-                }
-                for (; i <= qDense.degree(); i++) {
-                    newCoeff[i] = qDense.getCoefficient(i);
-                }
+            int[] newCoeff = new int[max + 1];
+            for (int i = 0; i <= degree(); i++) {
+                newCoeff[i] += coefficients[i];
+            }
+            for (int i = 0; i <= qDense.degree(); i++) {
+                newCoeff[i] -= qDense.getCoefficient(i);
             }
             DensePolynomial newPoly = new DensePolynomial(polynomialString);
             newPoly.setCoefficients(newCoeff);
@@ -251,13 +275,16 @@ public class DensePolynomial implements Polynomial {
         for (String s : split) if (s.contains("^-")) return false;
         String[] operatorCheck = polynomialString.split("[ \\da-z^-]+");
         if (split.length != operatorCheck.length && operatorCheck.length > 0) return false;
+//        if (polynomialString.split("[ a-zA-Z]+").length == 0) return false;
+//        if (polynomialString.matches("^[a-zA-Z]*$")) return false;
 
         for (int i = 0; i < split.length; i++) {
             String[] s = split[i].split("\\^");
+//            System.out.println(s[0]);
 
             if (i == 0) { // First Element/Highest Degree
                 if (s.length > 1)  {
-                    // TODO: ["3x", "2"] or ["x", "2"]
+                    // : ["3x", "2"] or ["x", "2"]
                     if (Double.parseDouble(s[1]) % 1 != 0) return false;
                     coefficients = new int[Integer.parseInt(s[1]) + 1];
                     if (s[0].split("[a-z]+").length == 0) { // Must be coefficient of 1
@@ -267,12 +294,17 @@ public class DensePolynomial implements Polynomial {
                         coefficients[Integer.parseInt(s[1])] = Integer.parseInt(s[0].split("[a-z]+")[0]);
                     }
                 } else {
-                    // TODO: ["x"] or ["2"] or ["5x"]
+                    // : ["x"] or ["2"] or ["5x"]
                     if (Character.isAlphabetic(s[0].charAt(0))) {
                         coefficients = new int[2];
                         coefficients[1] = 1;
                     } else {
                         String[] t = s[0].split("x");
+                        if (t[0].contains("-")) {
+                            if (t[0].split("-").length == 0) coefficients = new int[]{0, -1};
+                            else coefficients = new int[]{0, Integer.parseInt(t[0])};
+                            continue;
+                        }
                         if (Double.parseDouble(t[0]) % 1 != 0) return false;
                         if (s[0].contains("x")) coefficients = new int[]{0, Integer.parseInt(t[0])};
                         else coefficients = new int[]{Integer.parseInt(t[0])};
@@ -289,16 +321,20 @@ public class DensePolynomial implements Polynomial {
                     coefficients[Integer.parseInt(s[1])] = 1;
                 } else {
                     if (Double.parseDouble(s[0].split("[a-z]+")[0]) % 1 != 0) return false;
+//                    if (Integer.parseInt(s[1]) >= coefficients.length) return false;
                     coefficients[Integer.parseInt(s[1])] = Integer.parseInt(s[0].split("[a-z]+")[0]);
                 }
             } else {
-                // Done: ["x"] or ["2"]
+                // Done: ["x"] or ["2"] or ["5x"]
                 if (Character.isAlphabetic(s[0].charAt(0))) {
                     coefficients[1] = 1;
                 } else {
                     String[] t = s[0].split("x");
                     if (Double.parseDouble(t[0]) % 1 != 0) return false;
-                    coefficients[0] = Integer.parseInt(t[0]);
+                    else if (s[0].contains("x")) coefficients[1] = Integer.parseInt(s[0].split("x")[0]);
+                    else if (Integer.parseInt(t[0]) != 0) coefficients[0] = Integer.parseInt(t[0]);
+                    else coefficients[0] = 0;
+//                    System.out.println(t[0]);
                 }
             }
 
@@ -317,17 +353,18 @@ public class DensePolynomial implements Polynomial {
         for (int i = coefficients.length - 1; i >= 0; i--) {
             if (coefficients[i] != 0) {
                 if (i <= 1) {
-                    if (i == 1) {
-                        if (coefficients[i] == 1)
-                            s.append(coefficients[i]).append("x").append(" + ");
-                        else
+                    if (i == 1) { // If the exponent is 1
+                        if (coefficients[i] == 1) // If Coefficient is 1
                             s.append("x").append(" + ");
-                    } else {
+                        else
+                            s.append(coefficients[i]).append("x").append(" + ");
+                    } else { // Exponent is 0
                         s.append(coefficients[i]);
                     }
                 } else s.append(coefficients[i]).append("x^").append(i).append(" + ");
             }
         }
+        if (s.toString().endsWith(" + ")) return s.substring(0, s.lastIndexOf(" + "));
         if (s.length() == 0) return "0";
         return s.toString();
     }

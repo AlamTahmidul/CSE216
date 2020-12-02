@@ -70,7 +70,7 @@ class SparsePolynomialTest {
         Polynomial p3 = new DensePolynomial("0");
         Polynomial p4 = new SparsePolynomial("0");
 
-        assertEquals(p1.multiply(p2), new SparsePolynomial("15x^3 + 9x^2"));
+        assertEquals(p1.multiply(p2).toString(), (new SparsePolynomial("15x^3 + 9x^2")).toString());
         assertEquals(p1.multiply(p3), new SparsePolynomial("0"));
         assertTrue(p2.multiply(p3).multiply(p1).isZero());
         assertTrue(p3.multiply(p4).isZero());
