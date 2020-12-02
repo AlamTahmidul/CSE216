@@ -1,36 +1,82 @@
+import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class DensePolynomialTest {
 
-    @org.junit.jupiter.api.Test
-    void degree() {
+    @Test
+    void testDegree() {
+        Polynomial p1 = new DensePolynomial("x");
+        Polynomial p2 = new DensePolynomial("16x^3");
+        Polynomial p3 = new DensePolynomial("1");
+
+        assertEquals(p1.degree(), 1);
+        assertEquals(p2.degree(), 3);
+        assertEquals(p3.degree(), 0);
     }
 
-    @org.junit.jupiter.api.Test
-    void getCoefficient() {
+    @Test
+    void testGetCoefficient() {
+        Polynomial p1 = new DensePolynomial("x");
+        Polynomial p2 = new DensePolynomial("16x^3");
+        Polynomial p3 = new DensePolynomial("1");
+
+        assertEquals(p1.getCoefficient(2), 0);
+        assertEquals(p1.getCoefficient(1), 1);
+        assertEquals(p1.getCoefficient(0), 0);
+        assertEquals(p2.getCoefficient(3), 16);
+        assertEquals(p2.getCoefficient(2), 0);
+        assertEquals(p2.getCoefficient(1), 0);
+        assertEquals(p2.getCoefficient(0), 0);
+        assertEquals(p3.getCoefficient(0), 1);
+        assertEquals(p3.getCoefficient(1), 0);
     }
 
-    @org.junit.jupiter.api.Test
-    void isZero() {
+    @Test
+    void testIsZero() {
+        Polynomial p1 = new SparsePolynomial("0");
+        Polynomial p2 = new SparsePolynomial("x");
+        Polynomial p3 = new SparsePolynomial("1");
+        Polynomial p4 = new SparsePolynomial("4x^2 + 3x + 2");
+
+        assertTrue(p1.isZero());
+        assertFalse(p2.isZero());
+        assertFalse(p3.isZero());
+        assertFalse(p4.isZero());
     }
 
-    @org.junit.jupiter.api.Test
-    void add() {
+    @Test
+    void testAdd() {
+        Polynomial p1 = new DensePolynomial("4x^2");
+        Polynomial p2 = new DensePolynomial("3x");
+        Polynomial p3 = new DensePolynomial("0");
+        Polynomial p4 = new SparsePolynomial("5x");
+        Polynomial p5 = new SparsePolynomial("3");
+        Polynomial p6 = new SparsePolynomial("2x^-2");
+
+        assertEquals(p1.add(p2), new DensePolynomial("4x^2 + 3x"));
+        assertEquals(p2.add(p1), new DensePolynomial("4x^2 + 3x"));
+        assertEquals(p1.add(p3), p3.add(p1));
+        assertEquals(p2.add(p3), p3.add(p2));
+        assertEquals(p1.add(p2).add(p4), new DensePolynomial("4x^2 + 8x"));
+        assertEquals(p1.add(p2).add(p4).add(p5), new SparsePolynomial("4x^2 + 8x + 3"));
+        assertThrows(IllegalArgumentException.class, () -> p1.add(p6));
+        assertThrows(NullPointerException.class, () -> p1.add(null));
+        assertThrows(NullPointerException.class, () -> p1.add(p2).add(null));
     }
 
-    @org.junit.jupiter.api.Test
-    void multiply() {
+    @Test
+    void testMultiply() {
     }
 
-    @org.junit.jupiter.api.Test
-    void subtract() {
+    @Test
+    void testSubtract() {
     }
 
-    @org.junit.jupiter.api.Test
-    void minus() {
+    @Test
+    void testMinus() {
     }
 
-    @org.junit.jupiter.api.Test
-    void testEquals() {
+    @Test
+    void wellFormed() {
     }
 }
