@@ -1,10 +1,13 @@
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class WordCounter3 {
@@ -81,13 +84,55 @@ public class WordCounter3 {
         } catch (InterruptedException | ExecutionException | IOException e) {
             e.printStackTrace();
         }
-        // Add to File
-        int max_width = txtFiles.stream().max(Comparator.comparingInt(String::length)).map(String::length).orElse(0);
+        build(tmToOut, txtFiles);
 
-//        System.out.println("Max Filename width: " + max_width);
-        String filenames = ("%" + (max_width + 3) + "s").repeat(txtFiles.size());
-//        tmToOut;
+        // Add to File
+
+        // Max Width of the columns (file names)
+        int max_width = txtFiles.stream().max(Comparator.comparingInt(String::length)).map(String::length).orElse(0);
+        String widthTemplate = "%-%is".replaceFirst("%-%i", "%-" + (max_width + 2));
+        // Max Width of the first column
+        int max_word_length =
+                tmToOut.keySet().stream().max(Comparator.comparingInt(String::length)).map(String::length).orElse(0);
+        String widthWordTemplate = "%-%is".replaceFirst("%-%i", "%-" + (max_word_length + 1));
+
+        String header = IntStream.range(0, max_word_length + 1).mapToObj(i -> " ").collect(Collectors.joining(""));
+        header += txtFiles.stream().map(s -> String.format(widthTemplate, s)).collect(Collectors.joining());
+        System.out.println(header);
+        try {
+            FileWriter fileWriter = new FileWriter(String.valueOf(WORD_COUNT_TABLE_FILE.toAbsolutePath()));
+            String toFile = "";
+            fileWriter.write(String.valueOf(tmToOut));
+//            for (Map.Entry<String, TreeMap<String, Integer>> entry : tmToOut.entrySet()) {
+//                // Key: Word, Value: TreeMap<String, Integer> -> Filename, Counter
+//                for (String fileName : txtFiles) {
+//                }
+//            }
+            fileWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         System.out.println("Output File Location: " + WORD_COUNT_TABLE_FILE.toAbsolutePath());
+    }
+
+    /**
+     * Adds filenames that are not already present with the corresponding word
+     *
+     * @param tmToOut
+     * @param txtFiles
+     * @return
+     */
+    private static TreeMap<String, TreeMap<String, Integer>> build(TreeMap<String, TreeMap<String, Integer>> tmToOut, ArrayList<String> txtFiles) {
+        for (Map.Entry<String, TreeMap<String, Integer>> entry : tmToOut.entrySet()) {
+            // Key: Word, Value: TreeMap<String, Integer> -> Filename, Counter
+            for (String i : txtFiles) {
+                if (!entry.getValue().containsKey(i)) {
+//                    System.out.println(i);
+                    entry.getValue().putIfAbsent(i, 0);
+                }
+            }
+        }
+        return tmToOut;
     }
 }
 
@@ -114,7 +159,8 @@ class FileReadTask implements Callable<TreeMap<String, TreeMap<String, Integer>>
                 for (String i : content) {
                     String key = i.toLowerCase(Locale.ROOT);
                     TreeMap<String, Integer> newTm = new TreeMap<>();
-                    String filename = pathToFile.getFileName().toString();
+                    String filename = pathToFile.getFileName().toString().substring(0,
+                            pathToFile.getFileName().toString().indexOf(".txt"));
 
                     if (treeMap.containsKey(key)) {
                         // If the filename is already in the map with the given word then just update the counter
@@ -127,7 +173,7 @@ class FileReadTask implements Callable<TreeMap<String, TreeMap<String, Integer>>
                             treeMap.get(key).putIfAbsent(filename, 1);
                         }
                     } else {
-                        newTm.put(pathToFile.getFileName().toString(), 1);
+                        newTm.put(filename, 1);
                         treeMap.putIfAbsent(key, newTm);
                     }
                 }
