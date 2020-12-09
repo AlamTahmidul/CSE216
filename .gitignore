@@ -3,5 +3,10 @@
 *.pyc
 HW3/venv
 HW3/.idea
+HW5\src\Text Files
+HW5\src\Sample File Generator
+HW5\src\Output Files
+HW5\out\*
 *.xml
 *.iml
+*.txt

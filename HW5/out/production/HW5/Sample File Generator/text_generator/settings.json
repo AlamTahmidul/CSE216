@@ -1,0 +1,10 @@
+{
+    "DIRECTORY_NAME": "files",
+    "TEXTFILE_PREFIX": "text",
+    "NUM_OF_TEXTFILES": 50,
+    "NUM_OF_LINES": 1000,
+    "WORDS_PER_LINE": 25,
+    "WORD_SET_SIZE": 50,
+    "OUTPUT_COLUMN_WIDTH_MIN": 10,
+    "OUTPUT_COLUMN_BUFFER": 4 
+}

@@ -1,3 +1,4 @@
+import javax.xml.transform.Result;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -10,17 +11,18 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-public class WordCounter3 {
+public class WordCounter {
     // The following are the ONLY variables we will modify for grading.
     // The rest of your code must run with no changes.
-    public static final Path FOLDER_OF_TEXT_FILES  = Paths.get(".\\src\\Text Files"); // path to the folder where input
+    public static final Path FOLDER_OF_TEXT_FILES  = Paths.get(".\\src\\Sample File Generator\\text_generator\\files"); // path to the folder where input
     // text files are located
     public static final Path WORD_COUNT_TABLE_FILE = Paths.get(".\\src\\Output Files\\output.txt"); // path to the
     // output plain-text (.txt) file
-    public static final int  NUMBER_OF_THREADS     = 2;                // max. number of threads to spawn
+    public static final int  NUMBER_OF_THREADS     = 5;                // max. number of threads to spawn
 
     public static void main(String... args) {
         // your implementation of how to run the WordCounter as a stand-alone multi-threaded program
+        long time1 = System.currentTimeMillis();
         ArrayList<String> txtFiles = new ArrayList<>();
         // Create Tasks
         ArrayList<Callable<TreeMap<String, TreeMap<String, Integer>>>> tasks = new ArrayList<>();
@@ -32,8 +34,9 @@ public class WordCounter3 {
                 }
             });
         } catch (IOException e) {
-            System.out.println("Invalid directory of input files");
-            e.printStackTrace();
+            System.out.println("Invalid directory of input files. Directory does not exist.");
+            System.out.println("Exiting...");
+            return;
         }
 
         // Create threads and Start tasks
@@ -44,30 +47,29 @@ public class WordCounter3 {
         try {
             System.out.println("Reading Files...");
             List<Future<TreeMap<String, TreeMap<String, Integer>>>> results = executors.invokeAll(tasks);
-            System.out.println("Finished reading files! Creating Output File...");
-//            for (Future f : results) {
-//                TreeMap<String, TreeMap<String, Integer>> tmp = (TreeMap<String, TreeMap<String, Integer>>) f.get();
-//                System.out.println(tmp.firstEntry());
-//            }
             createFile(results.get(0), txtFiles);
+
+            // Tasks finished
+            System.out.println("Task done! Terminating threads...");
+            executors.shutdown();
+
+            try {
+                if (!executors.awaitTermination(5, TimeUnit.SECONDS)) {
+                    System.out.println("Shutdown Unresponsive for 5 seconds. Forcing termination...");
+                    executors.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                executors.shutdownNow();
+            } finally {
+                System.out.println("Successfully Terminated!");
+                System.out.println("\nFinished in " + (System.currentTimeMillis() - time1) / 100.0 + " seconds.");
+                System.out.println("With " + threads + " threads");
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-        // Tasks finished
-        System.out.println("Task done! Terminating threads...");
-        executors.shutdown();
-        try {
-            if (!executors.awaitTermination(5, TimeUnit.SECONDS)) {
-                System.out.println("Shutdown Unresponsive for 5 seconds. Forcing termination...");
-                executors.shutdownNow();
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            executors.shutdownNow();
-        } finally {
-            System.out.println("Successfully Terminated!");
-        }
     }
 
     private static void createFile(Future<TreeMap<String, TreeMap<String, Integer>>> treeMapFuture,
@@ -83,7 +85,19 @@ public class WordCounter3 {
             }
         } catch (InterruptedException | ExecutionException | IOException e) {
             e.printStackTrace();
+        } finally {
+            if (tmToOut.size() == 1 && tmToOut.containsKey("")) {
+                try {
+                    FileWriter fileWriter = new FileWriter(String.valueOf(WORD_COUNT_TABLE_FILE.toAbsolutePath()));
+                    fileWriter.write("");
+                    fileWriter.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
+        assert tmToOut != null;
+        if (tmToOut.size() == 1 && tmToOut.containsKey("")) return;
         build(tmToOut, txtFiles);
 
         // Add to File
@@ -98,16 +112,25 @@ public class WordCounter3 {
 
         String header = IntStream.range(0, max_word_length + 1).mapToObj(i -> " ").collect(Collectors.joining(""));
         header += txtFiles.stream().map(s -> String.format(widthTemplate, s)).collect(Collectors.joining());
-        System.out.println(header);
+        header += String.format(widthTemplate, "Total") + "\n";
         try {
             FileWriter fileWriter = new FileWriter(String.valueOf(WORD_COUNT_TABLE_FILE.toAbsolutePath()));
+            fileWriter.write(header);
             String toFile = "";
-            fileWriter.write(String.valueOf(tmToOut));
-//            for (Map.Entry<String, TreeMap<String, Integer>> entry : tmToOut.entrySet()) {
-//                // Key: Word, Value: TreeMap<String, Integer> -> Filename, Counter
-//                for (String fileName : txtFiles) {
-//                }
-//            }
+            for (Map.Entry<String, TreeMap<String, Integer>> entry : tmToOut.entrySet()) {
+                toFile += String.format(widthWordTemplate, entry.getKey()); // Add Word ( entry.getKey() )
+
+                // Add the counters
+                String temp = "";
+                Set<String> set = entry.getValue().keySet();
+                temp += set.stream().map(s -> String.format(widthTemplate,
+                        entry.getValue().get(s).toString())).collect(Collectors.joining());
+
+                int total = entry.getValue().values().stream().reduce(0, Integer::sum);
+                toFile += temp + total + "\n";
+            }
+            toFile += "------File Ends Here------";
+            fileWriter.write(toFile);
             fileWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -151,10 +174,10 @@ class FileReadTask implements Callable<TreeMap<String, TreeMap<String, Integer>>
      * @throws Exception if unable to compute a result
      */
     @Override
-    public TreeMap<String, TreeMap<String, Integer>> call() throws Exception {
+    public synchronized TreeMap<String, TreeMap<String, Integer>> call() throws Exception {
         synchronized (treeMap) {
             try {
-                String regex = "[ .,:;!?'\"\r\n]+";
+                String regex = "[ .,:;!?'()_\"\r\n]+";
                 String[] content = (new String(Files.readAllBytes(pathToFile))).split(regex);
                 for (String i : content) {
                     String key = i.toLowerCase(Locale.ROOT);
