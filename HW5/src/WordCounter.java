@@ -1,15 +1,8 @@
-import javax.xml.transform.Result;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.*;
+import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
+import java.util.stream.*;
 
 public class WordCounter {
     // The following are the ONLY variables we will modify for grading.
@@ -25,7 +18,7 @@ public class WordCounter {
         long time1 = System.currentTimeMillis();
         ArrayList<String> txtFiles = new ArrayList<>();
         // Create Tasks
-        ArrayList<Callable<TreeMap<String, TreeMap<String, Integer>>>> tasks = new ArrayList<>();
+        List<Callable<TreeMap<String, TreeMap<String, Integer>>>> tasks = new ArrayList<>();
         try (Stream<Path> paths = Files.list(FOLDER_OF_TEXT_FILES)) {
             paths.forEach(f -> {
                 if (f.getFileName().toString().endsWith(".txt")) {
@@ -86,6 +79,7 @@ public class WordCounter {
         } catch (InterruptedException | ExecutionException | IOException e) {
             e.printStackTrace();
         } finally {
+            assert tmToOut != null;
             if (tmToOut.size() == 1 && tmToOut.containsKey("")) {
                 try {
                     FileWriter fileWriter = new FileWriter(String.valueOf(WORD_COUNT_TABLE_FILE.toAbsolutePath()));
@@ -96,7 +90,6 @@ public class WordCounter {
                 }
             }
         }
-        assert tmToOut != null;
         if (tmToOut.size() == 1 && tmToOut.containsKey("")) return;
         build(tmToOut, txtFiles);
 
@@ -116,9 +109,9 @@ public class WordCounter {
         try {
             FileWriter fileWriter = new FileWriter(String.valueOf(WORD_COUNT_TABLE_FILE.toAbsolutePath()));
             fileWriter.write(header);
-            String toFile = "";
+            StringBuilder toFile = new StringBuilder();
             for (Map.Entry<String, TreeMap<String, Integer>> entry : tmToOut.entrySet()) {
-                toFile += String.format(widthWordTemplate, entry.getKey()); // Add Word ( entry.getKey() )
+                toFile.append(String.format(widthWordTemplate, entry.getKey())); // Add Word ( entry.getKey() )
 
                 // Add the counters
                 String temp = "";
@@ -127,10 +120,10 @@ public class WordCounter {
                         entry.getValue().get(s).toString())).collect(Collectors.joining());
 
                 int total = entry.getValue().values().stream().reduce(0, Integer::sum);
-                toFile += temp + total + "\n";
+                toFile.append(temp).append(total).append("\n");
             }
-            toFile += "------File Ends Here------";
-            fileWriter.write(toFile);
+            toFile.append("------File Ends Here------");
+            fileWriter.write(toFile.toString());
             fileWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -142,26 +135,25 @@ public class WordCounter {
      * Adds filenames that are not already present with the corresponding word
      *
      * @param tmToOut
+     *  The TreeMap to return
      * @param txtFiles
-     * @return
+     *  The text file names
      */
-    private static TreeMap<String, TreeMap<String, Integer>> build(TreeMap<String, TreeMap<String, Integer>> tmToOut, ArrayList<String> txtFiles) {
+    private static void build(TreeMap<String, TreeMap<String, Integer>> tmToOut, ArrayList<String> txtFiles) {
         for (Map.Entry<String, TreeMap<String, Integer>> entry : tmToOut.entrySet()) {
             // Key: Word, Value: TreeMap<String, Integer> -> Filename, Counter
             for (String i : txtFiles) {
                 if (!entry.getValue().containsKey(i)) {
-//                    System.out.println(i);
                     entry.getValue().putIfAbsent(i, 0);
                 }
             }
         }
-        return tmToOut;
     }
 }
 
 class FileReadTask implements Callable<TreeMap<String, TreeMap<String, Integer>>> {
     Path pathToFile;
-    private static TreeMap<String, TreeMap<String, Integer>> treeMap = new TreeMap<>();
+    private static final TreeMap<String, TreeMap<String, Integer>> treeMap = new TreeMap<>();
 
     public FileReadTask(Path pathToFile) {
         this.pathToFile = pathToFile;
